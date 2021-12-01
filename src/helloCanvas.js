@@ -18,7 +18,7 @@ async function main() {
         return;
     }
     //get position
-    let a_position = gl.getAttribLocation(gl.program, 'a_position');
+    let a_position = gl.getAttribLocation(res, 'a_position');
     if (a_position === -1) {
         console.log("can not get a_position");
         return;
