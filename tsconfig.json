@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "target": "ES2016",
+        "moduleResolution": "node"
+    },
+    "watchOptions": {
+        "watchFile": "useFsEvents",
+        "watchDirectory": "useFsEvents",
+    }
+}

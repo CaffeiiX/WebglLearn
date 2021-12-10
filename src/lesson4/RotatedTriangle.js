@@ -55,7 +55,6 @@ class animateClass {
     }
     animate() {
         let start = performance.now();
-        let _this = this;
         const animate = (time) => {
             let timeFraction = (time - start) / this.duration;
             if (timeFraction > 1)
