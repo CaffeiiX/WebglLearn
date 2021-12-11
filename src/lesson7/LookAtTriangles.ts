@@ -38,19 +38,21 @@ const main = async () => {
     gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, 6*FSIZE, 3*FSIZE);
     gl.enableVertexAttribArray(a_Position);
     gl.enableVertexAttribArray(a_Color);
-
+    let [eyeX, eyeY, eyeZ] = [0.2,0.25,0.25];
+    document.onkeydown = (event) => {
+        if(event.key == "ArrowRight") eyeX += 0.05;
+        if(event.key == "ArrowLeft") eyeX -= 0.05;
+        if(event.key == "ArrowUp") eyeY += 0.05;
+        if(event.key == "ArrowDown") eyeY -= 0.05;
+        draw(gl, u_ViewMatrix, eyeX, eyeY,eyeZ);
+    }
+    draw(gl, u_ViewMatrix, eyeX, eyeY,eyeZ);
     // matrix
+}
+function draw(gl:WebGLRenderingContext,u_ViewMatrix: WebGLUniformLocation, eyeX: number, eyeY: number, eyeZ: number){
     let viewMatrix : Matrix4 = new Matrix4(undefined);
-    viewMatrix.setLookAt(0.2,0.25,0.25,0.,0.,0.,0.,1.,0.);
-    
-    let modelMatrix = new Matrix4(undefined);
-    modelMatrix.setRotate(-10,0,0,1);
-
-    let modelViewMatrix = viewMatrix.multiply(modelMatrix);
-    
-    gl.uniformMatrix4fv(u_ViewMatrix, false, modelViewMatrix.elements);
-    
-    // 
+    viewMatrix.setLookAt(eyeX,eyeY,eyeZ,0.,0.,0.,0.,1.,0.);
+    gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
     gl.clearColor(0.,0.,0.,1.);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArrays(gl.TRIANGLES, 0, 9);
