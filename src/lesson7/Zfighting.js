@@ -7,12 +7,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { initGL, loadShaderFromFile, getLocation } from "../../lib/webgl-tool.js";
+import { loadShaderFromFile, initGL, getLocation } from "../../lib/webgl-tool.js";
 import { Matrix4 } from "../../lib/cuon-matrix.js";
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const gl = initGL('webgl');
-    const vsFile = "../src/shader/LookAtTriangles.vs";
-    const fsFile = "../src/shader/LookAtTriangles.fs";
+    const vsFile = "../src/shader/Zfighting.vs";
+    const fsFile = "../src/shader/Zfighting.fs";
     let program = yield loadShaderFromFile(gl, vsFile, fsFile);
     if (program instanceof Error)
         return;
@@ -21,17 +21,13 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const a_Color = getLocation(gl, program, 'a_Color');
     const u_ViewMatrix = getLocation(gl, program, 'u_ViewMatrix', false);
     const u_ProjMatrix = getLocation(gl, program, 'u_ProjMatrix', false);
-    // init buffer
     const vertexData = new Float32Array([
-        0., 0.5, 0., 0.4, 0.4, 1.,
-        -0.5, -0.5, 0., 0.4, 0.4, 1.,
-        0.5, -0.5, 0., 1.0, 0.4, 0.4,
-        0.5, 0.4, -0.2, 1.0, 0.4, 0.4,
-        -0.5, 0.4, -0.2, 1., 1.0, 0.4,
-        0., -0.6, -0.2, 1.0, 1.4, 0.4,
-        0., 0.5, -0.4, 0.4, 1.0, 0.4,
-        -0.5, -0.5, -0.4, 0.4, 1.0, 0.4,
-        0.5, -0.5, -0.4, 1.0, 0.4, 0.4,
+        0., 2.5, -5., 0., 1., .0,
+        -2.5, -2.5, -5., 0., 1., 0.,
+        2.5, -2.5, -5., 1., 0., 0.,
+        0., 3., -5., 1., 0., 0.,
+        -3., -3., -5., 1., 1., 0.,
+        3., -3., -5., 1., 1., 0.
     ]);
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -41,30 +37,18 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, 6 * FSIZE, 3 * FSIZE);
     gl.enableVertexAttribArray(a_Position);
     gl.enableVertexAttribArray(a_Color);
-    let [eyeX, eyeY, eyeZ] = [0.2, 0.25, 0.25];
-    document.onkeydown = (event) => {
-        if (event.key == "ArrowRight")
-            eyeX += 0.05;
-        if (event.key == "ArrowLeft")
-            eyeX -= 0.05;
-        if (event.key == "ArrowUp")
-            eyeY += 0.05;
-        if (event.key == "ArrowDown")
-            eyeY -= 0.05;
-        draw(gl, u_ViewMatrix, u_ProjMatrix, eyeX, eyeY, eyeZ);
-    };
-    draw(gl, u_ViewMatrix, u_ProjMatrix, eyeX, eyeY, eyeZ);
-    // matrix
-});
-function draw(gl, u_ViewMatrix, u_ProjMatrix, eyeX, eyeY, eyeZ) {
-    let viewMatrix = new Matrix4(undefined);
-    viewMatrix.setLookAt(eyeX, eyeY, eyeZ, 0., 0., 0., 0., 1., 0.);
-    gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
+    //
     let projMatrix = new Matrix4(undefined);
-    projMatrix.setOrtho(-1, 1, -1, 1, -100, 100);
+    projMatrix.setPerspective(50, 1, 1, 100);
+    let viewMatrix = new Matrix4(undefined);
+    viewMatrix.setLookAt(0., 0., 10., 0., 0., 0., 0., 1., 0.);
+    gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
     gl.uniformMatrix4fv(u_ProjMatrix, false, projMatrix.elements);
     gl.clearColor(0., 0., 0., 1.);
     gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.drawArrays(gl.TRIANGLES, 0, 9);
-}
+    gl.enable(gl.POLYGON_OFFSET_FILL);
+    gl.drawArrays(gl.TRIANGLES, 3, 6);
+    gl.polygonOffset(1., 1.);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+});
 main();

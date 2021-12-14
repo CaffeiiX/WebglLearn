@@ -1,10 +1,12 @@
 {
     "compilerOptions": {
+        "allowJs": true,
         "target": "ES2016",
-        "moduleResolution": "node"
+        "moduleResolution": "classic",
+        "experimentalDecorators": true,
     },
     "watchOptions": {
         "watchFile": "useFsEvents",
-        "watchDirectory": "useFsEvents",
-    }
+        "watchDirectory": "useFsEvents"
+    },
 }
